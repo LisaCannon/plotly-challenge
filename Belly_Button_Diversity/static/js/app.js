@@ -15,54 +15,134 @@ function buildMetadata(sample) {
     
     // BONUS: Build the Gauge Chart of belly button scrubs per week
     //Set the pull as a pointer for the gauge chart 
-    pullList = [0,0,0,0,0,0,0,0,0,0];
+    // pullList = [0,0,0,0,0,0,0,0,0,0];
     scrubs = sample.WFREQ;
     //any scrubs above 8 go in the 8+ group
     if (scrubs > 8) {scrubs = 8};
-    pullList[scrubs] = 0.1;
+    // pullList[scrubs] = 0.1;
 
     //
     var gaugeDiv = document.getElementById("gauge");
-
-    var traceA = {
-      type: "pie",
-      showlegend: false,
-      hole: 0.4,
-      rotation: 90,
-      values: [100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100/9, 100],
-      text: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
-      direction: "clockwise",
-      textinfo: "text",
-      textposition: "inside",
-      pull: pullList,
-      marker: {
-        colors: [
-          "rgba(14, 127, 0, .5)",
-          "rgba(110, 154, 22, .5)",
-          "rgba(150, 170, 32, .5)",
-          "rgba(170, 202, 42, .5)",
-          "rgba(190, 209, 95, .5)",
-          "rgba(202, 209, 120, .5)",
-          "rgba(210, 206, 145, .5)",
-          "rgba(220, 216, 179, .5)",
-          "rgba(232, 226, 202, .5)",
-          "rgba(255, 255, 255, 0)"
-        ]
-      },
-      labels: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
-      hoverinfo: "label"
-    };
-    var degrees = sample.WFREQ*180/9;
-    var radius = .5;
-    var radians = degrees * Math.PI / 180;
-    var x = -1 * radius * Math.cos(radians);
-    var y = radius * Math.sin(radians);
       
-    var layout = {
-      title: 'Number of Scrubs per Week',
-      xaxis: {visible: false, range: [-1, 1]},
-      yaxis: {visible: false, range: [-1, 1]}
-    };
+    // var traceA = {
+    //   type: "pie",
+    //   showlegend: false,
+    //   hole: 0.4,
+    //   rotation: 90,
+    //   values: [100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100/9, 100],
+    //   text: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
+    //   direction: "clockwise",
+    //   textinfo: "text",
+    //   textposition: "inside",
+      // pull: pullList,
+      // marker: {
+      //   colors: [
+      //     "rgba(14, 127, 0, .5)",
+      //     "rgba(110, 154, 22, .5)",
+      //     "rgba(150, 170, 32, .5)",
+      //     "rgba(170, 202, 42, .5)",
+      //     "rgba(190, 209, 95, .5)",
+      //     "rgba(202, 209, 120, .5)",
+      //     "rgba(210, 206, 145, .5)",
+      //     "rgba(220, 216, 179, .5)",
+      //     "rgba(232, 226, 202, .5)",
+      //     "rgba(255, 255, 255, 0)"
+      //   ]
+      // },
+      // labels: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
+    //   hoverinfo: "label"
+    // };
+
+    
+    // var degrees = sample.WFREQ*180/9;
+    // var radius = .5;
+    // var radians = degrees * Math.PI / 180;
+    // var x = -1 * radius * Math.cos(radians);
+    // var y = radius * Math.sin(radians);
+    
+    
+    var level = 180*scrubs/9;
+
+// Trig to calc meter point
+var degrees = 180 - level,
+	 radius = .5;
+var radians = degrees * Math.PI / 180;
+var x = radius * Math.cos(radians);
+var y = radius * Math.sin(radians);
+
+// Path: may have to change to create a better triangle
+var mainPath = 'M -.0 -0.5 L .0 0.5 L ',
+	 pathX = String(x),
+	 space = ' ',
+	 pathY = String(y),
+	 pathEnd = ' Z';
+var path = mainPath.concat(pathX,space,pathY,pathEnd);
+
+    
+
+var traceA = [{ type: 'scatter',
+   x: [0], y:[0],
+	marker: {size: 28, color:'850000'},
+	showlegend: false,
+	name: 'scrubs',
+	text: level,
+	hoverinfo: 'text+name'},
+  { values: [100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100 / 9, 100/9, 100],
+  rotation: 90,
+  text: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
+  textinfo: 'text',
+  textposition:'inside',	  
+  marker: {colors: [
+    "rgba(14, 127, 0, .5)",
+    "rgba(110, 154, 22, .5)",
+    "rgba(150, 170, 32, .5)",
+    "rgba(170, 202, 42, .5)",
+    "rgba(190, 209, 95, .5)",
+    "rgba(202, 209, 120, .5)",
+    "rgba(210, 206, 145, .5)",
+    "rgba(220, 216, 179, .5)",
+    "rgba(232, 226, 202, .5)",
+    "rgba(255, 255, 255, 0)"
+  ]},
+  labels: ["0", "1", "2", "3", "4","5","6","7","8+", ""],
+  hoverinfo: 'label',
+  hole: .5,
+  type: 'pie',
+  showlegend: false
+}];
+
+var layout = {
+  shapes:[{
+      type: 'path',
+      path: path,
+      fillcolor: '850000',
+      line: {
+        color: '850000'
+      }
+    }],
+  title: '<strong>Frequency of Belly Button Washing</strong> <br> Scrubs per Week',
+  height: 1000,
+  width: 1000,
+  xaxis: {zeroline:false, showticklabels:false,
+			 showgrid: false, range: [-1, 1]},
+  yaxis: {zeroline:false, showticklabels:false,
+			 showgrid: false, range: [-1, 1]}
+};
+
+
+    // var layout = {
+    //   shapes:[{
+    //     type: 'path',
+    //     path: path,
+    //     fillcolor: '850000',
+    //     line: {
+    //       color: '850000'
+    //     }
+    //   }],
+    //   title: 'Number of Scrubs per Week',
+    //   xaxis: {visible: false, range: [-1, 1]},
+    //   yaxis: {visible: false, range: [-1, 1]}
+    // };
       
     var data = [traceA];
       
