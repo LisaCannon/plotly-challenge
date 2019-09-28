@@ -101,4 +101,6 @@ def samples(sample):
 
 
 if __name__ == "__main__":
+    #when you upload to heroku, take out debug
+    # app.run(debug = True, port = 5024)
     app.run()
